@@ -31,7 +31,7 @@ export async function GetFormStats() {
 
   let bounceRate = 0;
 
-  if (submissionRate === 0) {
+  if (submissionRate > 0) {
     bounceRate = 100 - submissionRate;
   }
 
@@ -48,5 +48,25 @@ export async function CreateForm(data: formSchemaType) {
   if (!validation.success) {
     throw new Error('Form not valid');
   }
-  console.log(data);
+
+  const user = await currentUser();
+
+  if (!user) {
+    throw new UserNotFoundError();
+  }
+
+  const { name, description } = data;
+
+  const form = await db
+    .insert(forms)
+    .values({ name, description, userId: user.id })
+    .returning();
+
+  if (!form) {
+    throw new Error('Form not created');
+  }
+
+  const formId = form[0].id;
+
+  return formId;
 }

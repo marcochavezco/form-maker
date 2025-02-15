@@ -25,6 +25,7 @@ import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { formSchema, formSchemaType } from '@/schemas/form';
 import { CreateForm } from '@/actions/form';
+import { FilePlus } from 'lucide-react';
 
 function CreateFormBtn() {
   const form = useForm<formSchemaType>({
@@ -33,8 +34,13 @@ function CreateFormBtn() {
 
   async function onSubmit(values: formSchemaType) {
     try {
-      await CreateForm(values);
-    } catch (error) {
+      const formId = await CreateForm(values);
+      toast({
+        title: 'Success',
+        description: 'Form has been created successfully',
+      });
+      console.log('FORM ID', formId);
+    } catch {
       toast({
         title: 'Error',
         description: 'Something went wrong, please try again later',
@@ -46,7 +52,16 @@ function CreateFormBtn() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Create New Form</Button>
+        <Button
+          variant={'outline'}
+          className='group border border-primary/20 h-[190px] items-center justify-center flex flex-col hover:border-primary hover:cursor-pointer border-dashed gap-4
+        '
+        >
+          <FilePlus className='h-8 w-8 text-muted-foreground group-hover:text-primary' />
+          <p className='font-bold text-xl text-muted-foreground group-hover:text-primary'>
+            Create New Form
+          </p>
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

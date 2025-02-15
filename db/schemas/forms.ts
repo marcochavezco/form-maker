@@ -5,7 +5,7 @@ import { formSubmissions } from './formSubmissions';
 
 export const forms = sqliteTable('forms', {
   id: int('id').primaryKey({ autoIncrement: true }),
-  userId: text('user_id').notNull(),
+  userId: text('user_id').notNull().unique(),
   createdAt: text('created_at')
     .notNull()
     .default(sql`(CURRENT_TIMESTAMP)`),
