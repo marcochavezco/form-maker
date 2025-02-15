@@ -66,7 +66,7 @@ function StatsCards(props: StatsCardsProps) {
         title='Submissions Rate'
         icon={<PercentIcon />}
         helperText='Submission rate of the form'
-        value={data?.submissionRate.toLocaleString() || ''}
+        value={data?.submissionRate.toLocaleString() + '%' || ''}
         loading={loading}
         className='shadow-md shadow-green-600'
       />
@@ -74,7 +74,7 @@ function StatsCards(props: StatsCardsProps) {
         title='Bounce Rate'
         icon={<ArrowUpToLineIcon />}
         helperText='Bounce rate of the form'
-        value={data?.bounceRate.toLocaleString() || ''}
+        value={data?.bounceRate.toLocaleString() + '%' || ''}
         loading={loading}
         className='shadow-md shadow-red-600'
       />
