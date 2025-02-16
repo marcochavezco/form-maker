@@ -189,7 +189,11 @@ const FormCard = ({ form }: { form: formSchemaType }) => {
           </Button>
         )}
         {!form.published && (
-          <Button asChild className='w-full mt-2 text-md gap-4'>
+          <Button
+            asChild
+            variant={'secondary'}
+            className='w-full mt-2 text-md gap-4'
+          >
             <Link href={`/builder/${form.id}`}>
               Edit Form <Edit />
             </Link>
