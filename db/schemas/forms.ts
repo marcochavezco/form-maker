@@ -5,10 +5,10 @@ import { formSubmissions } from './formSubmissions';
 
 export const forms = sqliteTable('forms', {
   id: int('id').primaryKey({ autoIncrement: true }),
-  userId: text('user_id').notNull().unique(),
+  userId: text('user_id').notNull(),
   createdAt: text('created_at')
     .notNull()
-    .default(sql`(CURRENT_TIMESTAMP)`),
+    .default(sql`CURRENT_TIMESTAMP`),
   published: int('published', { mode: 'boolean' }).notNull().default(false),
   name: text('name').notNull().unique(),
   description: text('description').default(''),
@@ -25,3 +25,5 @@ export const forms = sqliteTable('forms', {
 export const formsRelations = relations(forms, ({ many }) => ({
   formSubmissions: many(formSubmissions),
 }));
+
+export type formSchemaType = typeof forms.$inferSelect;

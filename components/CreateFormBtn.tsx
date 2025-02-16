@@ -26,8 +26,11 @@ import { Textarea } from './ui/textarea';
 import { formSchema, formSchemaType } from '@/schemas/form';
 import { CreateForm } from '@/actions/form';
 import { FilePlus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 function CreateFormBtn() {
+  const router = useRouter();
+
   const form = useForm<formSchemaType>({
     resolver: zodResolver(formSchema),
   });
@@ -39,7 +42,7 @@ function CreateFormBtn() {
         title: 'Success',
         description: 'Form has been created successfully',
       });
-      console.log('FORM ID', formId);
+      router.push(`/builder/${formId}`);
     } catch {
       toast({
         title: 'Error',
