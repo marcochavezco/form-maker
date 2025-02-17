@@ -1,16 +1,17 @@
 import { GetFormById } from '@/actions/form';
-import { formSchemaType } from '@/db/schemas/forms';
+import FormBuilder from '@/components/FormBuilder';
+import { formType } from '@/db/schemas/forms';
 import React from 'react';
 
 async function BuilderPage({ params }: { params: { id: string } }) {
   const { id } = params;
-  const form: formSchemaType = await GetFormById(Number(id));
+  const form: formType = await GetFormById(Number(id));
 
   if (!form) {
     throw new Error('Form not found');
   }
 
-  return <div>{form.name}</div>;
+  return <FormBuilder form={form} />;
 }
 
 export default BuilderPage;

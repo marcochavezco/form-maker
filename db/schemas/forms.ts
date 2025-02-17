@@ -26,4 +26,4 @@ export const formsRelations = relations(forms, ({ many }) => ({
   formSubmissions: many(formSubmissions),
 }));
 
-export type formSchemaType = typeof forms.$inferSelect;
+export type formType = typeof forms.$inferSelect;

@@ -19,7 +19,7 @@ import { Skeleton } from '../../components/ui/skeleton';
 import { Suspense } from 'react';
 import { Separator } from '@/components/ui/separator';
 import CreateFormBtn from '@/components/CreateFormBtn';
-import { formSchemaType } from '@/db/schemas/forms';
+import { formType } from '@/db/schemas/forms';
 import { Badge } from '@/components/ui/badge';
 import { formatDistance } from 'date-fns';
 import Link from 'next/link';
@@ -154,7 +154,7 @@ async function FormCards() {
   );
 }
 
-const FormCard = ({ form }: { form: formSchemaType }) => {
+const FormCard = ({ form }: { form: formType }) => {
   return (
     <Card>
       <CardHeader>
