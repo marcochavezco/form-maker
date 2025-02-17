@@ -4,7 +4,7 @@ import { db } from '@/db/schemas';
 import { forms } from '@/db/schemas/forms';
 import { formSchema, formSchemaType } from '@/schemas/form';
 import { currentUser } from '@clerk/nextjs/server';
-import { desc, eq, sum } from 'drizzle-orm';
+import { and, desc, eq, sum } from 'drizzle-orm';
 
 class UserNotFoundError extends Error {}
 
@@ -85,4 +85,19 @@ export async function GetForms() {
     .orderBy(desc(forms.createdAt));
 
   return result;
+}
+
+export async function GetFormById(id: number) {
+  const user = await currentUser();
+
+  if (!user) {
+    throw new UserNotFoundError();
+  }
+
+  const [form] = await db
+    .select()
+    .from(forms)
+    .where(and(eq(forms.userId, user.id), eq(forms.id, id)));
+
+  return form;
 }
