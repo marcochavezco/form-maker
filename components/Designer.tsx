@@ -20,8 +20,13 @@ import { Button } from './ui/button';
 import { TrashIcon } from 'lucide-react';
 
 function Designer() {
-  const { elements, addElement, selectedElement, setSelectedElement } =
-    useDesigner();
+  const {
+    elements,
+    addElement,
+    selectedElement,
+    setSelectedElement,
+    removeElement,
+  } = useDesigner();
 
   const droppable = useDroppable({
     id: 'designer-drop-area',
@@ -36,15 +41,86 @@ function Designer() {
       }
 
       const isDesignerBtnElement = active.data?.current?.isDesignerBtnElement;
+      const isDroppingOverDesignerDropArea =
+        over.data?.current?.isDesignerDropArea;
 
-      if (isDesignerBtnElement) {
+      const droppingSidebarBtnOverDesignerDropArea =
+        isDesignerBtnElement && isDroppingOverDesignerDropArea;
+
+      if (droppingSidebarBtnOverDesignerDropArea) {
         const type = active.data?.current?.type;
         const newElement = FormElements[type as ElementsType].construct(
           idGenerator()
         );
 
-        addElement(0, newElement);
-        console.log('New element', newElement);
+        addElement(elements.length, newElement);
+      }
+
+      const isDroppingOverDesignerElementTopHalf =
+        over.data?.current?.isTopHalfDesignerElement;
+
+      const isDroppingOverDesignerElementBottomHalf =
+        over.data?.current?.isBottomHalfDesignerElement;
+
+      const isDroppingOverDesignerElement =
+        isDroppingOverDesignerElementTopHalf ||
+        isDroppingOverDesignerElementBottomHalf;
+
+      const droppingSidebarBtnOverDesignerElement =
+        isDesignerBtnElement && isDroppingOverDesignerElement;
+
+      if (droppingSidebarBtnOverDesignerElement) {
+        const type = active.data?.current?.type;
+        const newElement = FormElements[type as ElementsType].construct(
+          idGenerator()
+        );
+
+        const overId = over.data?.current?.elementId;
+
+        const overElementIndex = elements.findIndex(
+          (element) => element.id === overId
+        );
+        if (overElementIndex === -1) {
+          throw new Error('Element not found');
+        }
+
+        let indexForNewElement = overElementIndex;
+        if (isDroppingOverDesignerElementBottomHalf) {
+          indexForNewElement += 1;
+        }
+
+        addElement(indexForNewElement, newElement);
+      }
+
+      const isDraggingDesignerElement = active.data?.current?.isDesignerElement;
+
+      const draggingDesignerElementOverAnotherDesignerElement =
+        isDroppingOverDesignerElement && isDraggingDesignerElement;
+
+      if (draggingDesignerElementOverAnotherDesignerElement) {
+        const activeId = active.data?.current?.elementId;
+        const overId = over.data?.current?.elementId;
+
+        const activeElementIndex = elements.findIndex(
+          (element) => element.id === activeId
+        );
+        const overElementIndex = elements.findIndex(
+          (element) => element.id === overId
+        );
+
+        if (activeElementIndex === -1 || overElementIndex === -1) {
+          throw new Error('Element not found');
+        }
+
+        const activeElement = { ...elements[activeElementIndex] };
+        removeElement(activeId);
+
+        let indexForNewElement = overElementIndex;
+        if (isDroppingOverDesignerElementBottomHalf) {
+          indexForNewElement += 1;
+        }
+
+        addElement(indexForNewElement, activeElement);
       }
     },
   });
@@ -61,7 +137,7 @@ function Designer() {
           ref={droppable.setNodeRef}
           className={cn(
             'bg-background max-w-[920px] h-full m-auto rounded-xl flex flex-col flex-grow items-center justify-start flex-1 overflow-y-auto',
-            droppable.isOver && 'ring-2 ring-primary/20'
+            droppable.isOver && 'ring-4 ring-primary ring-inset'
           )}
         >
           {!droppable.isOver && elements.length === 0 && (
