@@ -101,3 +101,16 @@ export async function GetFormById(id: number) {
 
   return form;
 }
+
+export async function UpdateFormContent(id: number, JSONElements: string) {
+  const user = await currentUser();
+
+  if (!user) {
+    throw new UserNotFoundError();
+  }
+
+  await db
+    .update(forms)
+    .set({ content: JSONElements })
+    .where(and(eq(forms.userId, user.id), eq(forms.id, id)));
+}
