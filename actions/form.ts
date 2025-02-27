@@ -114,3 +114,16 @@ export async function UpdateFormContent(id: number, JSONElements: string) {
     .set({ content: JSONElements })
     .where(and(eq(forms.userId, user.id), eq(forms.id, id)));
 }
+
+export async function PublishForm(id: number) {
+  const user = await currentUser();
+
+  if (!user) {
+    throw new UserNotFoundError();
+  }
+
+  await db
+    .update(forms)
+    .set({ published: true })
+    .where(and(eq(forms.userId, user.id), eq(forms.id, id)));
+}

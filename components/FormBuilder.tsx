@@ -16,6 +16,12 @@ import {
 import DragOverlayWrapper from './DragOverlayWrapper';
 import useDesigner from './hooks/useDesigner';
 import { ImSpinner2 } from 'react-icons/im';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
+import { toast } from '@/hooks/use-toast';
+import Link from 'next/link';
+import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
+import Confetti from 'react-confetti';
 
 function FormBuilder({ form }: { form: formType }) {
   const { setElements } = useDesigner();
@@ -54,6 +60,60 @@ function FormBuilder({ form }: { form: formType }) {
     );
   }
 
+  const shareUrl = `${window.location.origin}/submit/${form.shareURL}`;
+
+  if (form.published) {
+    return (
+      <>
+        <Confetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          recycle={false}
+        />
+        <div className='flex flex-col items-center justify-center w-full h-full'>
+          <div className='max-w-md'>
+            <h1 className='text-center text-4xl font-bold text-primary border-b pb-2 mb-10'>
+              🎊 Form Published 🎊
+            </h1>
+            <h2 className='text-2xl'>Share this form</h2>
+            <h3 className='text-xl text-muted-foreground border-b pb-10'>
+              Anyone with the link can view and submit the form
+            </h3>
+            <div className='my-4 flex-col gap-2 items-center w-full border-b pb-4'>
+              <Input className='w-full' readOnly value={shareUrl} />
+              <Button
+                className='mt-2 w-full'
+                onClick={() => {
+                  navigator.clipboard.writeText(shareUrl);
+                  toast({
+                    title: 'Copied',
+                    description: 'Link copied to clipboard',
+                  });
+                }}
+              >
+                Copy Link
+              </Button>
+            </div>
+            <div className='flex justify-between'>
+              <Button variant={'link'} asChild>
+                <Link href={`/`} className='gap-2'>
+                  <ArrowLeftIcon />
+                  Go Back Home
+                </Link>
+              </Button>
+              <Button variant={'link'} asChild>
+                <Link href={`/forms/${form.id}`} className='gap-2'>
+                  Form Details
+                  <ArrowRightIcon />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <DndContext sensors={sensors}>
       <main className='flex flex-col w-full'>
@@ -67,7 +127,7 @@ function FormBuilder({ form }: { form: formType }) {
             {!form.published && (
               <>
                 <SaveFormBtn id={form.id} />
-                <PublishFormBtn />
+                <PublishFormBtn id={form.id} />
               </>
             )}
           </div>
