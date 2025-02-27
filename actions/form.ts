@@ -4,7 +4,7 @@ import { db } from '@/db/schemas';
 import { forms } from '@/db/schemas/forms';
 import { formSchema, formSchemaType } from '@/schemas/form';
 import { currentUser } from '@clerk/nextjs/server';
-import { and, desc, eq, sum } from 'drizzle-orm';
+import { and, desc, eq, sql, sum } from 'drizzle-orm';
 
 class UserNotFoundError extends Error {}
 
@@ -126,4 +126,14 @@ export async function PublishForm(id: number) {
     .update(forms)
     .set({ published: true })
     .where(and(eq(forms.userId, user.id), eq(forms.id, id)));
+}
+
+export async function GetFormContentByUrl(formUrl: string) {
+  const [form] = await db
+    .update(forms)
+    .set({ visits: sql`${forms.visits} + 1` })
+    .where(eq(forms.shareURL, formUrl))
+    .returning({ content: forms.content });
+
+  return form;
 }
