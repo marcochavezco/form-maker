@@ -2,6 +2,7 @@
 
 import { db } from '@/db/schemas';
 import { forms } from '@/db/schemas/forms';
+import { formSubmissions } from '@/db/schemas/formSubmissions';
 import { formSchema, formSchemaType } from '@/schemas/form';
 import { currentUser } from '@clerk/nextjs/server';
 import { and, desc, eq, sql, sum } from 'drizzle-orm';
@@ -136,4 +137,21 @@ export async function GetFormContentByUrl(formUrl: string) {
     .returning({ content: forms.content });
 
   return form;
+}
+
+export async function SubmitForm(formUrl: string, jsonContent: string) {
+  const [updatedForm] = await db
+    .update(forms)
+    .set({ submissions: sql`${forms.submissions} + 1` })
+    .where(eq(forms.shareURL, formUrl))
+    .returning({ id: forms.id });
+
+  if (!updatedForm) {
+    throw new Error('Form not found');
+  }
+
+  await db.insert(formSubmissions).values({
+    formId: updatedForm.id,
+    content: jsonContent,
+  });
 }
