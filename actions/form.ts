@@ -143,7 +143,7 @@ export async function SubmitForm(formUrl: string, jsonContent: string) {
   const [updatedForm] = await db
     .update(forms)
     .set({ submissions: sql`${forms.submissions} + 1` })
-    .where(eq(forms.shareURL, formUrl))
+    .where(and(eq(forms.shareURL, formUrl), eq(forms.published, true)))
     .returning({ id: forms.id });
 
   if (!updatedForm) {
