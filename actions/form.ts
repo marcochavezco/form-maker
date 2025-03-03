@@ -155,3 +155,28 @@ export async function SubmitForm(formUrl: string, jsonContent: string) {
     content: jsonContent,
   });
 }
+
+export async function GetFormSubmissions(formId: number) {
+  const user = await currentUser();
+
+  if (!user) {
+    throw new UserNotFoundError();
+  }
+
+  const response = await db
+    .select({
+      form: forms,
+      formSubmission: formSubmissions,
+    })
+    .from(forms)
+    .where(and(eq(forms.id, formId), eq(forms.userId, user.id)))
+    .leftJoin(formSubmissions, eq(formSubmissions.formId, formId))
+    .orderBy(desc(formSubmissions.createdAt));
+
+  const form = response[0].form;
+  const submissions = response.map((res) => {
+    return res.formSubmission;
+  });
+
+  return { form, submissions };
+}

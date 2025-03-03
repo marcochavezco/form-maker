@@ -19,3 +19,5 @@ export const formSubmissionsRelations = relations(
     form: one(forms),
   })
 );
+
+export type formSubmissionsType = typeof formSubmissions.$inferSelect;
