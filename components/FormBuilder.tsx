@@ -24,7 +24,7 @@ import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
 import Confetti from 'react-confetti';
 
 function FormBuilder({ form }: { form: formType }) {
-  const { setElements } = useDesigner();
+  const { setElements, setSelectedElement } = useDesigner();
 
   const [isReady, setIsReady] = useState(false);
 
@@ -46,11 +46,12 @@ function FormBuilder({ form }: { form: formType }) {
     if (isReady) return;
     const elements = JSON.parse(form.content);
     setElements(elements);
+    setSelectedElement(null);
     const readyTimeout = setTimeout(() => {
       setIsReady(true);
     }, 500);
     return () => clearTimeout(readyTimeout);
-  }, [form, setElements, isReady]);
+  }, [form, setElements, isReady, setSelectedElement]);
 
   if (!isReady) {
     return (

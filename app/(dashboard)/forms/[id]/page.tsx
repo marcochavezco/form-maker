@@ -120,6 +120,10 @@ async function SubmissionsTable({ id }: { id: number }) {
   formElements.forEach((element) => {
     switch (element.type) {
       case 'TextField':
+      case 'NumberField':
+      case 'TextAreaField':
+      case 'DateField':
+      case 'SelectField':
         columns.push({
           id: element.id,
           label: element.extraAttributes?.label,
@@ -132,13 +136,14 @@ async function SubmissionsTable({ id }: { id: number }) {
   });
 
   const rows: Row[] = [];
-
   submissions.forEach((submission) => {
-    const content = JSON.parse(submission?.content);
-    rows.push({
-      ...content,
-      submittedAt: submission?.createdAt,
-    });
+    if (submission?.content) {
+      const content = JSON.parse(submission.content);
+      rows.push({
+        ...content,
+        submittedAt: submission?.createdAt,
+      });
+    }
   });
 
   return (
