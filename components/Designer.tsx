@@ -41,17 +41,14 @@ function Designer() {
       }
 
       const isDesignerBtnElement = active.data?.current?.isDesignerBtnElement;
-      const isDroppingOverDesignerDropArea =
-        over.data?.current?.isDesignerDropArea;
+      const isDesignerDropArea = over.data?.current?.isDesignerDropArea;
 
       const droppingSidebarBtnOverDesignerDropArea =
-        isDesignerBtnElement && isDroppingOverDesignerDropArea;
+        isDesignerBtnElement && isDesignerDropArea;
 
       if (droppingSidebarBtnOverDesignerDropArea) {
-        const type = active.data?.current?.type;
-        const newElement = FormElements[type as ElementsType].construct(
-          idGenerator()
-        );
+        const type = active.data?.current?.type as ElementsType;
+        const newElement = FormElements[type].construct(idGenerator());
 
         addElement(elements.length, newElement);
       }
@@ -66,10 +63,7 @@ function Designer() {
         isDroppingOverDesignerElementTopHalf ||
         isDroppingOverDesignerElementBottomHalf;
 
-      const droppingSidebarBtnOverDesignerElement =
-        isDesignerBtnElement && isDroppingOverDesignerElement;
-
-      if (droppingSidebarBtnOverDesignerElement) {
+      if (isDroppingOverDesignerElement && isDesignerBtnElement) {
         const type = active.data?.current?.type;
         const newElement = FormElements[type as ElementsType].construct(
           idGenerator()
@@ -94,10 +88,10 @@ function Designer() {
 
       const isDraggingDesignerElement = active.data?.current?.isDesignerElement;
 
-      const draggingDesignerElementOverAnotherDesignerElement =
+      const isDraggingDesignerElementOverAnotherDesignerElement =
         isDroppingOverDesignerElement && isDraggingDesignerElement;
 
-      if (draggingDesignerElementOverAnotherDesignerElement) {
+      if (isDraggingDesignerElementOverAnotherDesignerElement) {
         const activeId = active.data?.current?.elementId;
         const overId = over.data?.current?.elementId;
 
@@ -129,7 +123,8 @@ function Designer() {
     <div className='flex w-full h-full'>
       <div
         className='p-4 w-full'
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
           if (selectedElement) setSelectedElement(null);
         }}
       >
